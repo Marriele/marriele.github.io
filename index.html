@@ -3,47 +3,63 @@
      <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Tyson Facility Emissions</title>
+        <title>Cargill Facility Emissions</title>
          <style> 
              h1 {font-family: cursive; color:darkblue}
              p{font-family: helvetica arial; color: black;}
              a{font-family: helvetica arial; color: darkgreen;}
-             #map {height: 500px; width: 100%;}
+             #map {height: 500px; width: 80%;}
+             #map {zoom: 1.5}
          </style>
         <meta name="description" content="Marrieles first webpage">
         <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
           <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
         <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
+
     </head>
      <body>
-         <h1>Tyson Beef Facility Emissions</h1>
+         <h1>Cargill Beef Facility Emissions</h1>
          <p>By: Marriele Robinson</p>
-         <p>Tyson is currently operating seven C,II facilities.  As defined by the EPA, C indiacates beef livestock and II indicates a f acility that utilizes wastewater treatment facilities. This map indicates the facilities location, emissions for 2011 and 2015.  Additionally, locations emissions are indicated from highest lowest by gradiating from red to beige. </p>
-         <div id="map"></div>
+         <p>Cargill is currently operating six C,II facilities.  As defined by the EPA, C indiacates beef livestock and II indicates a facility that utilizes wastewater treatment facilities. This map indicates the facilities location, emissions for 2011 and 2015.  Additionally, locations emissions are indicated from highest lowest by gradiating from red to beige. </p>
+       
          <select id="menu"> 
-             <option value="tc">Cargill and Tyson</option>
-             <option value="t">Tyson Facilities</option>
+             <option value="a">All Facilities</option>
              <option value="c">Cargill Facilities</option>
          </select>
+    
+         <div id="map"></div>
+         
+     <script type="template/html" id="popup-template">
+         <div class="cartodb-popup">
+        <a href="#close" class="cartodb-popup-close-button close">x</a>
+        <div class="cartodb-popup-content-wrapper">
+         <div class="cartodb-popup-content">
+             2015 Emissions {{_2015_emissions}}  
+             2011 Emissions {{_2011_emissions}}
+            </div>
+            </div>
+            <div class="cartodb-popup-tip-container"></div>
+            </div>
+        </script> 
+         
          <script>
-         function main() {
+          $(document).ready(function () {
              var layer; 
              
-             var tysonandcargill = "SELECT * FROM marri.ghgrp_data_5_year_review WHERE primary_naics_code = '311611' AND (facility_name ILIKE '%tyson%' OR facility_name ILIKE '%cargill%') AND latest_reported_industry_type_subparts = 'C,II'";
-                 
-             var tyson = "SELECT * FROM marri.ghgrp_data_5_year_review WHERE primary_naics_code = '311611' AND facility_name ILIKE '%tyson%' AND latest_reported_industry_type_subparts = 'C,II'";
-
+             var allproviders = "SELECT * FROM marri.ghgrp_data_5_year_review WHERE primary_naics_code = '311611' AND latest_reported_industry_type_subparts = 'C,II'";
+             
              var cargill = "SELECT * FROM marri.ghgrp_data_5_year_review WHERE primary_naics_code = '311611' AND facility_name ILIKE '%cargill%' AND latest_reported_industry_type_subparts = 'C,II'";
             cartodb.createVis('map','https://thenewschool.carto.com/u/marri/api/v2/viz/9f62a7de-f92c-11e6-b7a4-0e3ff518bd15/viz.json', {
                 shareable: true,
-                tiles_loader: true
+                tiles_loader: true,
+                infowindow: true
             })
-            .done(function(vis, layers) {
+                .done(function(vis, layers) {
                 layer=layers[1].getSubLayer(0);
-                layer.setSQL(tysonandcargill);
-                
-                
+                layer.setSQL(allproviders);
+                 dataLayer.infowindow.set('sanitizeTemplate', false);
+                 dataLayer.infowindow.set('template', $('#popup-template').html());
               // layer 0 is the base layer, layer 1 is cartodb layer
               // setInteraction is disabled by default
              // layers[1].setInteraction(true);
@@ -58,23 +74,19 @@
             });
              
              $("#menu").change(function(){
-                if($("#menu").val() == "tc") {
-                    layer.setSQL(tysonandcargill);
+                if($("#menu").val() == "a") {
+                    layer.setSQL(allproviders);
                 }  
-                if($("#menu").val() == "t") {
-                    layer.setSQL(tyson);
-                 }  
+   
                  if($("#menu").val() == "c") {
                     layer.setSQL(cargill);
                  }
-                 
-                 
+                
                  
              });
-         }
-        window.onload = main;
+         });
+
         </script>
-         
          
          <p><a target="_blank" href="https://www.epa.gov/ghgreporting/ghg-reporting-program-data-sets">Source: EPA: "2015 Data Summary."</a>
         <img src="http://assets.inhabitat.com/wp-content/blogs.dir/1/files/2010/04/Epa-Logo.jpg" style="width:50px;"/> 
