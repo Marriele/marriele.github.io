@@ -3,13 +3,19 @@
      <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Cargill Facility Emissions</title>
+        <title>Factory Farming Location and Greenhouse Gas Emissions</title>
          <style> 
+             #gas div {font-weight: bold; margin-bottom: 8px}
+             #facilities div {font-weight: bold; margin-bottom: 8px}
              h1 {font-family: cursive; color:darkblue}
              p{font-family: helvetica arial; color: black;}
              a{font-family: helvetica arial; color: darkgreen;}
-             #map {height: 500px; width: 80%;}
-             #map {zoom: 1.5}
+             #map {height: 400px; width: 700px; border: 3px solid black;}
+             table td {vertical-align: top; }
+             table td label {display: block;}
+             #menu {font-size: 15px}
+             #epa {text-align: right}
+             
          </style>
         <meta name="description" content="Marrieles first webpage">
         <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
@@ -19,16 +25,42 @@
 
     </head>
      <body>
-         <h1>Cargill Beef Facility Emissions</h1>
+         <h1>Factory Farming Location and Greenhouse Gas Emissions</h1>
          <p>By: Marriele Robinson</p>
-         <p>Cargill is currently operating six C,II facilities.  As defined by the EPA, C indiacates beef livestock and II indicates a facility that utilizes wastewater treatment facilities. This map indicates the facilities location, emissions for 2011 and 2015.  Additionally, locations emissions are indicated from highest lowest by gradiating from red to beige. </p>
+         <p>This map allows toggling between factory farming locations in the United States that meet EPA required greenhouse gas emissions reporting.  </p>
+         <p>Cargill is currently operating seven of these facilities. A drop down menu allows for a visualiation of greenhouse gas emissions specific to Cargill facilities. </p>
        
-         <select id="menu"> 
-             <option value="a">All Facilities</option>
-             <option value="c">Cargill Facilities</option>
-         </select>
-    
-         <div id="map"></div>
+         
+         
+         <table> 
+             <tr> 
+                 <td> 
+                    <select id="menu"> 
+                     <option value="a">All Facilities</option>
+                     <option value="c">Cargill Facilities</option>
+                    </select>
+                     <hr/> 
+                     <div id="facilities">
+                      <div>  Type of Facility </div>
+                    <label><input type="checkbox" id="f311615"/> Poultry Processing</label>
+                    <label><input type="checkbox" id="f311612"/> Meat Processed from Carcasses</label>
+                    <label><input type="checkbox" id="f311611"/> Animal (except Poultry) Slaughtering</label>
+                </div>
+             <hr/>
+            <div id="gas">
+                <div> Greenhouse Gas Emissions </div>
+                <label><input type="radio" id="all" name="gas"/> All Emissions</label>
+                <label><input type="radio" id="vhigh" name="gas"/> Very High  </label>
+                <label><input type="radio" id="high" name="gas"/> High </label>
+                <label><input type="radio" id="med" name="gas"/> Medium  </label>
+                <label><input type="radio" id="low" name="gas"/> Low  </label>
+                     </div>
+                </td>
+                 <td> 
+                     <div id="map"></div>
+                 </td>
+             </tr>
+         </table>
          
      <script type="template/html" id="popup-template">
          <div class="cartodb-popup">
@@ -46,49 +78,76 @@
          <script>
           $(document).ready(function () {
              var layer; 
-             
-             var allproviders = "SELECT * FROM marri.ghgrp_data_5_year_review WHERE primary_naics_code = '311611' AND latest_reported_industry_type_subparts = 'C,II'";
-             
-             var cargill = "SELECT * FROM marri.ghgrp_data_5_year_review WHERE primary_naics_code = '311611' AND facility_name ILIKE '%cargill%' AND latest_reported_industry_type_subparts = 'C,II'";
+            
+              $("#facilities input").prop("checked",true);
+              $("#all").prop("checked",true);
+              
             cartodb.createVis('map','https://thenewschool.carto.com/u/marri/api/v2/viz/9f62a7de-f92c-11e6-b7a4-0e3ff518bd15/viz.json', {
                 shareable: true,
                 tiles_loader: true,
                 infowindow: true
+                
             })
-                .done(function(vis, layers) {
+            .done(function(vis, layers) {
                 layer=layers[1].getSubLayer(0);
-                layer.setSQL(allproviders);
+                updatedata(); 
                 layer.infowindow.set('sanitizeTemplate', false);
                 layer.infowindow.set('template', $('#popup-template').html());
-              // layer 0 is the base layer, layer 1 is cartodb layer
-              // setInteraction is disabled by default
-             // layers[1].setInteraction(true);
-             // layers[1].on('featureOver', function(e, latlng, pos, data) {
-                // cartodb.log.log(e, latlng, pos, data);
-              // });
-              // you can get the native map to work with it
-              // var map = vis.getNativeMap();
-              // now, perform any operations you need
-              // map.setZoom(3);
-              // map.panTo([50.5, 30.5]);
+          
             });
              
-             $("#menu").change(function(){
-                if($("#menu").val() == "a") {
-                    layer.setSQL(allproviders);
-                }  
-   
-                 if($("#menu").val() == "c") {
-                    layer.setSQL(cargill);
-                 }
+              function updatedata(){
+                  var sql = "SELECT * FROM marri.ghgrp_data_5_year_review ";
                 
-                 
+                  sql = sql + "WHERE primary_naics_code IN (";
+                  
+      
+                     if($("#f311615").prop("checked")){
+                        sql = sql + "'311615',";
+                    }
+                     if($("#f311612").prop("checked")){
+                        sql = sql + "'311612',";
+                    }
+                    if($("#f311611").prop("checked")){
+                        sql = sql + "'311611',";
+                    }
+
+                  
+                  sql = sql + "'0') ";
+                  
+                    
+                    if($("#menu").val() == "c") {
+                   sql = sql + "AND facility_name ILIKE '%cargill%' "; 
+                    }
+                   if($("#vhigh").prop("checked")){
+                      sql = sql + "AND _2015_emissions >69000.0";
+                  }
+                  
+                  if($("#high").prop("checked")){
+                      sql = sql + "AND _2015_emissions >55000.0 AND _2015_emissions <=69000.0";
+                  }
+                  if($("#med").prop("checked")){
+                      sql = sql + "AND _2015_emissions >35000.0 AND _2015_emissions <=55000.0";
+                  }
+                   if($("#low").prop("checked")){
+                      sql = sql + "AND _2015_emissions <=35000.0";
+                  }
+                  console.log(sql);
+                  layer.setSQL(sql);
+              }
+              
+              
+              
+              
+             $("#menu, #facilities input, #gas input").change(function(){
+                 updatedata();
+ 
              });
          });
 
         </script>
          
-         <p><a target="_blank" href="https://www.epa.gov/ghgreporting/ghg-reporting-program-data-sets">Source: EPA: "2015 Data Summary."</a>
+         <p id="epa"><a target="_blank" href="https://www.epa.gov/ghgreporting/ghg-reporting-program-data-sets">Source: EPA: "2015 Data Summary."</a>
         <img src="http://assets.inhabitat.com/wp-content/blogs.dir/1/files/2010/04/Epa-Logo.jpg" style="width:50px;"/> 
         </p>         
     </body>
