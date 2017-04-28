@@ -15,23 +15,22 @@
              table td label {display: block;}
              #menu {font-size: 15px}
              #epa {text-align: right}
-             
          </style>
+         
         <meta name="description" content="Marrieles first webpage">
         <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
           <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
         <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-
-
     </head>
-     <body>
+    
+    <body>
+        
          <h1>Factory Farming Locations and Greenhouse Gas Emissions</h1>
          <p>By: Marriele Robinson</p>
          <p>This map allows toggling between factory farming locations in the United States that meet EPA required greenhouse gas emissions reporting.  </p>
          <p>Cargill is currently operating seven of these facilities. A drop down menu allows for a visualiation of greenhouse gas emissions specific to Cargill facilities. </p>
        
-         
-         
+        
          <table> 
              <tr> 
                  <td> 
@@ -61,42 +60,67 @@
                  </td>
              </tr>
          </table>
-         
-     <script type="template/html" id="popup-template">
-         <div class="cartodb-popup">
+      
+        <script type="template/html" id="popup-template">
+          <div class="cartodb-popup v2">
         <a href="#close" class="cartodb-popup-close-button close">x</a>
-        <div class="cartodb-popup-content-wrapper">
-         <div class="cartodb-popup-content">
-             2015 Emissions {{_2015_emissions}}  
-             2011 Emissions {{_2011_emissions}}
-            </div>
-            </div>
-            <div class="cartodb-popup-tip-container"></div>
-            </div>
-        </script> 
-         
-         <script>
-          $(document).ready(function () {
-             var layer; 
-            
-              $("#facilities input").prop("checked",true);
-              $("#all").prop("checked",true);
+         <div class="cartodb-popup-content-wrapper">
+        <div class="cartodb-popup-content">
+        <div class="CDB-infowindow CDB-infowindow--light js-infowindow">
+        <div class="CDB-infowindow-close js-close"></div>
+        <div class="CDB-infowindow-container">
+        <div class="CDB-infowindow-bg">
+        <div class="CDB-infowindow-inner">
+        <h1 style="font-weight: bold;"> 2015 and 2011 Emissions </h1> <hr/>   
+        <ul class="CDB-infowindow-list js-content" style="margin-top:5px;margin-bottom:10px;">
+        <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000;">2015 emissions</h5>
+        <h4 class="CDB-infowindow-title">{{_2015_emissions}}</h4>
+    </li>
+        <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000;">2011 emissions</h5>
+        <h4 class="CDB-infowindow-title"> {{_2011_emissions}}</h4>
+    </li>
+    </ul>
+        <h1 style="font-weight: bold;"> Facility Name </h1> <hr/>   
+        <ul class="CDB-infowindow-list js-content" style="margin-top:5px;margin-bottom:5px;">
+          <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000;"> </h5>
+        <h4 class="CDB-infowindow-title">{{facility_name}}</h4> 
+    </li>
+    </ul>
+
+    </div>
+    </div>
+    <div class="CDB-hook">
+      <div class="CDB-hook-inner"></div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <div class="cartodb-popup-tip-container"></div>
+    </div>
+        </script>
+      
+        <script>
+            var layer;
               
-            cartodb.createVis('map','https://thenewschool.carto.com/u/marri/api/v2/viz/9f62a7de-f92c-11e6-b7a4-0e3ff518bd15/viz.json', {
-                shareable: true,
-                tiles_loader: true,
-                infowindow: true
-                
-            })
-            .done(function(vis, layers) {
-                layer=layers[1].getSubLayer(0);
-                updatedata(); 
-                layer.infowindow.set('sanitizeTemplate', false);
-                layer.infowindow.set('template', $('#popup-template').html());
-          
-            });
-             
-              function updatedata(){
+            $(document).ready(function () {
+                $("#facilities input").prop("checked",true);
+                $("#all").prop("checked",true);
+                cartodb.createVis('map', 'https://thenewschool.carto.com/u/marri/api/v2/viz/9b8d9984-290b-11e7-91b1-0ecd1babdde5/viz.json')
+                   
+                    .done(function (vis, layers) {
+                        layer = layers[1].getSubLayer(0);
+                        updatedata(); 
+                        layer.infowindow.set('sanitizeTemplate', false);
+                        layer.infowindow.set('template', $('#popup-template').html());
+   
+                    });
+           
+            
+                         function updatedata(){
                   var sql = "SELECT * FROM marri.ghgrp_data_5_year_review ";
                 
                   sql = sql + "WHERE primary_naics_code IN (";
@@ -143,8 +167,8 @@
                  updatedata();
  
              });
-         });
-
+             });
+            
         </script>
          
          <p id="epa"><a target="_blank" href="https://www.epa.gov/ghgreporting/ghg-reporting-program-data-sets">Source: EPA: "2015 Data Summary."</a>
