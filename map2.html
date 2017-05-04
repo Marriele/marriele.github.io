@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Facility Location to Natural Water Bodies</title>
+         <style> 
+             #gas div {font-weight: bold; margin-bottom: 8px}
+             #facilities div {font-weight: bold; margin-bottom: 8px}
+             h1 {font-family: cursive; color:darkblue}
+             p{font-family: helvetica arial; color: black;}
+             a{font-family: helvetica arial; color: darkgreen;}
+             #map {height: 400px; width: 700px; border: 3px solid black; position:absolute; left:0px; bottom:0px; z-index:1;}
+             table td {vertical-align: top; }
+             table td label {display: block;}
+             #container {position:relative; height:400px; width: 700px;}
+             .cartodb-legend {position:absolute; left:0px; bottom:0px;z-index:2; margin-left: 15px; margin-bottom: -15px; height: 100px; width: 190px}
+             #emissions-low-high {width:100%;margin-top: 10px;}
+             #emissions-low-high td {text-align: center; width:14.28%;}
+             
+             #emissions-gradient-1 {background: linear-gradient(90deg, #ffffb2, #fed976); height: 18px;}
+             #emissions-gradient-2 {background: linear-gradient(90deg, #fed976, #feb24c); height: 18px;}
+             #emissions-gradient-3 {background: linear-gradient(90deg, #feb24c, #e17526); height: 18px;}
+             #emissions-gradient-4 {background: linear-gradient(90deg, #e17526, #fc4e2a); height: 18px;}
+             #emissions-gradient-5 {background: linear-gradient(90deg, #fc4e2a, #e31a1c); height: 18px;}
+             #emissions-gradient-6 {background: linear-gradient(90deg, #e31a1c, #b10026); height: 18px;}
+             #emissions-gradient-7 {background: linear-gradient(90deg, #b10026, #7b001b); height: 18px;}
+         </style>
+         
+        <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+          <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    </head>
+    
+    <body>
+        
+        <table> 
+             <tr> 
+                 <td>
+                     <div id="container"> 
+                     <div id="map"></div>
+                      <div class="cartodb-legend color">
+                        <div class="legend-title"> Legend </div>
+                        <ul class="legend-list">
+                            <li><div class="bullet" style="background-color: rgb(102,207,255);"></div> Natural Bodies of Water </li>
+                            <li><div class="bullet" style="background-color: #2b6608;"></div> Unreported Emissions </li>
+                            <li>
+                                <table id="emissions-low-high">
+                                    <tr>
+                                        <td colspan="7">
+                                            Emmission Levels
+                                        </td>
+                                    </tr>
+                                    <tr id="emissions-gradient">
+                                        <td id="emissions-gradient-1"></td>
+                                        <td id="emissions-gradient-2"></td>
+                                        <td id="emissions-gradient-3"></td>
+                                        <td id="emissions-gradient-4"></td>
+                                        <td id="emissions-gradient-5"></td>
+                                        <td id="emissions-gradient-6"></td>
+                                        <td id="emissions-gradient-7"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Low</td>
+                                        <td colspan="3"></td>
+                                        <td colspan="2">High</td>
+                                    </tr>
+                                </table>
+                            </li>
+                        </ul>
+                    </div>
+                     </div>
+                 </td>
+             </tr>      
+         </table>
+      
+         <script type="template/html" id="popup-template">
+          <div class="cartodb-popup v2">
+        <a href="#close" class="cartodb-popup-close-button close">x</a>
+         <div class="cartodb-popup-content-wrapper">
+        <div class="cartodb-popup-content">
+        <div class="CDB-infowindow CDB-infowindow--light js-infowindow">
+        <div class="CDB-infowindow-close js-close"></div>
+        <div class="CDB-infowindow-container">
+        <div class="CDB-infowindow-bg">
+        <div class="CDB-infowindow-inner">
+        <h1 style="font-weight: bold; font-size: 14px; color: #000000"> 2015 and 2011 Emissions </h1> <hr/>   
+        <ul class="CDB-infowindow-list js-content" style="margin-top:5px;margin-bottom:10px;">
+        <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000; font-size: 12px;">2015 emissions</h5>
+        <h4 class="CDB-infowindow-title" style="color:#807e7b; font-size: 12px;">{{_2015_emissions}}</h4>
+    </li>
+        <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000; font-size: 12px;">2011 emissions</h5>
+        <h4 class="CDB-infowindow-title" style="color:#807e7b; font-size: 13px;"> {{_2011_emissions}}</h4>
+    </li>
+    </ul>
+        <h1 style="font-weight: bold; font-size: 14px; color: #000000"> Facility Name </h1> <hr/>   
+        <ul class="CDB-infowindow-list js-content" style="margin-top:5px;margin-bottom:5px;">
+          <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000;"> </h5>
+        <h4 class="CDB-infowindow-title" style="color:black; font-size: 12px:">{{facility_name}}</h4> 
+    </li>
+    </ul>
+
+    </div>
+    </div>
+    <div class="CDB-hook">
+      <div class="CDB-hook-inner"></div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <div class="cartodb-popup-tip-container"></div>
+    </div>
+        </script>
+      
+        <script>
+            
+            var layer,layer2;
+              
+            $(document).ready(function () {
+
+                cartodb.createVis('map', 'https://thenewschool.carto.com/u/marri/api/v2/viz/daceaa1c-2c11-11e7-aa45-0e3ff518bd15/viz.json', {zoom: 3})
+                //center_lat: 39.8282, center_lon: -98.5795, 
+                   
+                    .done(function (vis, layers) {
+                        layer = layers[1].getSubLayer(0);
+                        layer2 = layers[1].getSubLayer(1);
+                        updatedata(); 
+                        layer.infowindow.set('sanitizeTemplate', false);
+                        layer.infowindow.set('template', $('#popup-template').html());
+                    });
+           
+            
+                    function updatedata(){
+                        layer.setSQL("SELECT * FROM marri.lakes_facilities_map_2 WHERE primary_naics_code >= 311000 AND primary_naics_code <= 311999 AND latest_reported_industry_type_sectors ILIKE 'OTHER' AND state != 'AK'");
+                  
+                        layer2.setSQL("SELECT * FROM marri.rivers_facilities_map_2 WHERE primary_naics_code >= 311000 AND primary_naics_code <= 311999 AND latest_reported_industry_type_sectors ILIKE 'OTHER'AND state != 'AK'");
+                    }
+              
+             });
+            
+        </script>
+         
+    </body>
+    
+</html>
