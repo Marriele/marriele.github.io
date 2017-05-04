@@ -10,7 +10,32 @@
              h1 {font-family: cursive; color:darkblue}
              p{font-family: helvetica arial; color: black;}
              a{font-family: helvetica arial; color: darkgreen;}
-             #map {height: 400px; width: 700px; border: 3px solid black;}
+             #container {position:relative; height:400px; width: 700px;}
+             #map {height: 400px; width: 700px; border: 3px solid black; position:absolute; left:0px; bottom:0px; z-index:1;}
+             .cartodb-legend {position:absolute; left:0px; bottom:0px;z-index:2; margin-left: 15px; margin-bottom: -15px; height: 100px; width: 190px}
+             #emissions-low-high {width:100%;margin-top: 10px;}
+             #emissions-low-high td {text-align: center; width:14.28%;}
+             
+             #emissions-gradient-1 {background: linear-gradient(90deg, #ffffb2, #fed976); height: 18px;}
+             #emissions-gradient-2 {background: linear-gradient(90deg, #fed976, #feb24c); height: 18px;}
+             #emissions-gradient-3 {background: linear-gradient(90deg, #feb24c, #e17526); height: 18px;}
+             #emissions-gradient-4 {background: linear-gradient(90deg, #e17526, #fc4e2a); height: 18px;}
+             #emissions-gradient-5 {background: linear-gradient(90deg, #fc4e2a, #e31a1c); height: 18px;}
+             #emissions-gradient-6 {background: linear-gradient(90deg, #e31a1c, #b10026); height: 18px;}
+             #emissions-gradient-7 {background: linear-gradient(90deg, #b10026, #7b001b); height: 18px;}
+             
+/*
+             marker-fill: #ffffb2;
+            marker-fill: #fed976;
+            marker-fill: #feb24c;
+            marker-fill: #e17526;
+             
+            marker-fill: #fc4e2a;
+            marker-fill: #e31a1c;
+            marker-fill: #b10026;
+            marker-fill: #7b001b;
+*/
+             
              table td {vertical-align: top; }
              table td label {display: block;}
              #menu {font-size: 15px}
@@ -55,10 +80,42 @@
                 <label><input type="radio" id="low" name="gas"/> Low  </label>
                      </div>
                 </td>
-                 <td> 
-                     <div id="map"></div>
+                 <td>
+                     <div id="container"> 
+                     <div id="map" ></div>
+                      <div class="cartodb-legend color">
+                        <div class="legend-title"> Legend </div>
+                        <ul class="legend-list">
+                            <li><div class="bullet" style="background-color: rgb(102,207,255);"></div> Natural Bodies of Water </li>
+                            <li><div class="bullet" style="background-color: #2b6608;"></div> Unreported Emissions </li>
+                            <li>
+                                <table id="emissions-low-high">
+                                    <tr>
+                                        <td colspan="7">
+                                            Emmission Levels
+                                        </td>
+                                    </tr>
+                                    <tr id="emissions-gradient">
+                                        <td id="emissions-gradient-1"></td>
+                                        <td id="emissions-gradient-2"></td>
+                                        <td id="emissions-gradient-3"></td>
+                                        <td id="emissions-gradient-4"></td>
+                                        <td id="emissions-gradient-5"></td>
+                                        <td id="emissions-gradient-6"></td>
+                                        <td id="emissions-gradient-7"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Low</td>
+                                        <td colspan="3"></td>
+                                        <td colspan="2">High</td>
+                                    </tr>
+                                </table>
+                            </li>
+                        </ul>
+                    </div>
+                     </div>
                  </td>
-             </tr>
+             </tr>      
          </table>
       
         <script type="template/html" id="popup-template">
@@ -71,22 +128,22 @@
         <div class="CDB-infowindow-container">
         <div class="CDB-infowindow-bg">
         <div class="CDB-infowindow-inner">
-        <h1 style="font-weight: bold;"> 2015 and 2011 Emissions </h1> <hr/>   
+        <h1 style="font-weight: bold; font-size: 14px; color: #000000"> 2015 and 2011 Emissions </h1> <hr/>   
         <ul class="CDB-infowindow-list js-content" style="margin-top:5px;margin-bottom:10px;">
         <li class="CDB-infowindow-listItem">
-        <h5 class="CDB-infowindow-subtitle" style="color:#000000;">2015 emissions</h5>
-        <h4 class="CDB-infowindow-title">{{_2015_emissions}}</h4>
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000; font-size: 12px;">2015 emissions</h5>
+        <h4 class="CDB-infowindow-title" style="color:#807e7b; font-size: 12px;">{{_2015_emissions}}</h4>
     </li>
         <li class="CDB-infowindow-listItem">
-        <h5 class="CDB-infowindow-subtitle" style="color:#000000;">2011 emissions</h5>
-        <h4 class="CDB-infowindow-title"> {{_2011_emissions}}</h4>
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000; font-size: 12px;">2011 emissions</h5>
+        <h4 class="CDB-infowindow-title" style="color:#807e7b; font-size: 13px;"> {{_2011_emissions}}</h4>
     </li>
     </ul>
-        <h1 style="font-weight: bold;"> Facility Name </h1> <hr/>   
+        <h1 style="font-weight: bold; font-size: 14px; color: #000000"> Facility Name </h1> <hr/>   
         <ul class="CDB-infowindow-list js-content" style="margin-top:5px;margin-bottom:5px;">
           <li class="CDB-infowindow-listItem">
         <h5 class="CDB-infowindow-subtitle" style="color:#000000;"> </h5>
-        <h4 class="CDB-infowindow-title">{{facility_name}}</h4> 
+        <h4 class="CDB-infowindow-title" style="color:black; font-size: 12px:">{{facility_name}}</h4> 
     </li>
     </ul>
 
