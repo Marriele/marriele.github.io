@@ -3,16 +3,25 @@
      <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Factory Farming Locations and Greenhouse Gas Emissions</title>
+        <title>Facility Locations & Environmental Effects</title>
          <style> 
-             #gas div {font-weight: bold; margin-bottom: 8px}
+             html {height: 100%;}
+             body {position: relative; height: 100%; margin: 0;}
+             .map {position: absolute; width: 75%; top: 0; left: 0; bottom: 0; height: 100%;}
+             .sidebar {width: 25%; position: absolute; top: 0; right: 0; bottom: 0; height: 100%; overflow: auto;}
+             .sidebar-content {margin: 15px; vertical-align: top;}
+             .sidebar-content label {display: block;}
+             .sidebar-content .show-map-1, .sidebar-content .show-map-2 {cursor: pointer;}
+             #map-2, #sidebar-2 {display: none;}
+            
+             #menu {font-size: 15px}
+             .gas div {font-weight: bold; margin-bottom: 8px}
              #facilities div {font-weight: bold; margin-bottom: 8px}
              h1 {font-family: cursive; color:darkblue}
              p{font-family: helvetica arial; color: black;}
              a{font-family: helvetica arial; color: darkgreen;}
-             #container {position:relative; height:400px; width: 700px;}
-             #map {height: 400px; width: 700px; border: 3px solid black; position:absolute; left:0px; bottom:0px; z-index:1;}
-             .cartodb-legend {position:absolute; left:0px; bottom:0px;z-index:2; margin-left: 15px; margin-bottom: -15px; height: 100px; width: 190px}
+             #map-1 {z-index:1;}
+             .cartodb-legend {position:absolute; left:0px; bottom:0px;z-index:2; margin-left: 15px; margin-bottom: -15px; height: 120px; width: 190px;}
              #emissions-low-high {width:100%;margin-top: 10px;}
              #emissions-low-high td {text-align: center; width:14.28%;}
              
@@ -23,43 +32,37 @@
              #emissions-gradient-5 {background: linear-gradient(90deg, #fc4e2a, #e31a1c); height: 18px;}
              #emissions-gradient-6 {background: linear-gradient(90deg, #e31a1c, #b10026); height: 18px;}
              #emissions-gradient-7 {background: linear-gradient(90deg, #b10026, #7b001b); height: 18px;}
-             
-/*
-             marker-fill: #ffffb2;
-            marker-fill: #fed976;
-            marker-fill: #feb24c;
-            marker-fill: #e17526;
-             
-            marker-fill: #fc4e2a;
-            marker-fill: #e31a1c;
-            marker-fill: #b10026;
-            marker-fill: #7b001b;
-*/
-             
-             table td {vertical-align: top; }
-             table td label {display: block;}
-             #menu {font-size: 15px}
-             #epa {text-align: right}
          </style>
          
-        <meta name="description" content="Marrieles first webpage">
+        <meta name="description" content="Factory Farming Locations & Environmental Effects">
         <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
           <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
         <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     </head>
     
     <body>
-        
-         <h1>Factory Farming Locations and Greenhouse Gas Emissions</h1>
-         <p>By: Marriele Robinson</p>
-         <p>This map allows toggling between factory farming locations in the United States that meet EPA required greenhouse gas emissions reporting.  </p>
-         <p>Cargill is currently operating seven of these facilities. A drop down menu allows for a visualiation of greenhouse gas emissions specific to Cargill facilities. </p>
-       
-        
-         <table> 
-             <tr> 
-                 <td> 
-                    <select id="menu"> 
+        <div id="map-1" class="map"></div>
+        <div id="map-2" class="map"></div>
+        <div id="sidebar-1" class="sidebar">
+            <div class="sidebar-content">
+                <p><a class="show-map-2">Switch to: Proximity to Environmentally Sensitive Protected Areas</a></p>
+                <h2>EPA Required Reporting Facilities and Environmental Impact</h2>
+                <p>By: Marriele Robinson</p>
+                <hr/>
+                  <h3>Project Overview and Context</h3>
+                <p>
+                    In the United States, 8,000 of the largest industry greenhouse gas emitters are required to the Environmental Protection Agencies (EPA) Greenhouse Gas Reporting System. Total reported emissions from these 8,000 facilities are about 3 billion metric tons CO2e, or 50 percent of total U.S. GHG emissions (EPA, 2017).  Beyond dispropotionately contributing the total greenhouse gas emissions, these facilities have few retrictions as to location. The result is high emitting factories placed inside or near to protected wildlife reserves. These areas will be especially sensitive to the contaminated water runoff commonplace with high emitting facilities, resulting in loss of ecosystems.
+                </p>
+                <p>
+                    This Project explores the implications of the facilities required to report to the EPA by depicting total greenhouse gas emissions and their proximity to both natural bodies of water and protected habitats.  Emphasis is placed on industrial agriculture for greenhouse gas emissions (Map 1) and facility location in repsect to protected wildlife areas (Map 2).
+                </p>
+                <hr/>
+                
+                 <h3>The Impact of Factory Farming Facilities on Air, Water, and Sensitive Ecosystems</h3>
+                <p>Use the radio buttons, check boxes, and drop-down menu to navigate industrial farming industry facilities. Click the points to review facility name and greenhouse gas emissions for 2015 and 211.</p>
+                <hr/>
+                
+                <select id="menu"> 
                      <option value="a">All Facilities</option>
                      <option value="c">Cargill Facilities</option>
                     </select>
@@ -71,22 +74,76 @@
                     <label><input type="checkbox" id="f311611"/> Animal (except Poultry) Slaughtering</label>
                 </div>
              <hr/>
-            <div id="gas">
+            <div id="gas-1" class="gas">
                 <div> Greenhouse Gas Emissions </div>
-                <label><input type="radio" id="all" name="gas"/> All Emissions</label>
-                <label><input type="radio" id="vhigh" name="gas"/> Very High  </label>
-                <label><input type="radio" id="high" name="gas"/> High </label>
-                <label><input type="radio" id="med" name="gas"/> Medium  </label>
-                <label><input type="radio" id="low" name="gas"/> Low  </label>
+                <label><input type="radio" id="all-1" name="gas"/> All Emissions</label>
+                <label><input type="radio" id="vhigh-1" name="gas"/> Very High  </label>
+                <label><input type="radio" id="high-1" name="gas"/> High </label>
+                <label><input type="radio" id="med-1" name="gas"/> Medium  </label>
+                <label><input type="radio" id="low-1" name="gas"/> Low  </label>
                      </div>
-                </td>
-                 <td>
-                     <div id="container"> 
-                     <div id="map" ></div>
-                      <div class="cartodb-legend color">
+                
+                <hr/>
+                <h3>Greenhouse Gas Emissions and Proximity to Rivers and Lakes</h3>
+                <p>The “Facilities Greenhouse Gas Emissions Map” depicts all factory farming facilities affiliated with animal processing, with the option to toggle to Cargill only facilities.  Globally, up to 29% of GHG emissions are from the agriculture sector (Global Justice Now, 2015). In the United States, the top four beef producers are responsible for over 70 percent of the domestic beef market (Painter, 2017).  With power concentrated to a few powerful and influential corporations, little progress has been achieved in modernizing the industrial farming industry.  In fact, practices remain almost unchanged from their initial development almost a century ago. The result is a polluting and exploitative industry that is harming the surrounding water, air, and ecosystems. </p>
+               <p>Facilities are also mapped based on nearest proximity to a natural body of water.  The agriculture industry is the leading cause of water quality problems today (EPA, 2016).  Fertilizers and manure resulting from livestock farming are the leading sources of water pollution from agricultural sources (The Sources and Solution: Agriculture, 2017).</p>
+
+                <p>The Center for Disease Control reported that between 1986-1998 every identified waterborne disease was likely from livestock-related water contaminates (Grace Projects, 2017).   With many facilities on or near the water, combined with the fact that 2,500 cows producing as much waste as 411,000 residents (Cargill has over 115,000 cows PER feedlot), these statistics are unsurprisingly. (Grace Projects, 2017).</p> 
+
+                <p>While the EPA mandates Livestock Manure Management Systems and National Pollutant Discharge Elimination System Permits, regulations haven’t fixed the water runoff problem.  Better management of livestock waste and drainage water would significantly reduce water runoff pollution. For example, moving cattle from industrial feed operations to field grazing reduces the presence of E. Coli (Grace Projects, 2017).  Additionally, facilities that adopt renewable energy systems for waste disposal, rather than in-ground containment tanks, would greatly reduce septic leaks.  However, renewable energy systems are as accepted by the EPA as in-ground tanks are, making the investment largely unnecessary in the eyes of industry leaders, and adoption remains limited.</p>
+                
+                <h3>Cargill</h3>
+                <p>Cargill facilities are included as a separate filter on this map due to their status.  Of the top three livestock producers, Cargill is the highest emitter of GHG, declaring over 15 million tons of CO2 emissions a year (Global Justice Now, 2015).  In the United States, Cargill, along with 8,000 of the largest industry emitters, is required to report seven of its facilities GHG emission data to the Environmental Protection Agencies (EPA) Greenhouse Gas Reporting System.   If Cargill was held responsible for poor waste management and water runoff issues, their changes in technologies and management process and procedures would result in an entire industry trend towards more sustainable practices.</p>
+                <hr/>
+                
+                 <h3>
+                     Data Sources
+                     <img src="http://assets.inhabitat.com/wp-content/blogs.dir/1/files/2010/04/Epa-Logo.jpg" style="width:50px;"/>
+                     <img src="https://bugwoodcloud.org/CDN/logos/mndnr_logo_vertical.jpg" style="width:50px;"/> 
+                     <img src="https://www.arb.ca.gov/newsrel/images/2015/canralogo.png" style="width:50px;"/> 
+                </h3>
+                 <p id="epa"><a target="_blank" href="https://www.epa.gov/ghgreporting/ghg-reporting-program-data-sets">EPA: "2015 Data Summary."</a>
+                 
+                </p>    
+                 <p id="MDNR"><a target="_blank" href="https://catalog.data.gov/dataset/usfws-waterfowl-production-areas-fee-interest">Minnesota Department of Natural Resources: Protected Waterfowl Production </a>
+                
+                </p>    
+                <p id="epa"><a target="_blank" href="https://catalog.data.gov/dataset/protected-spawning-areas-fish-and-game-code-1505-ds647">California Department of Natural Resources: Protected Spawning Areas."</a>
+                </p>
+                
+                <h3> Information Sources</h3>
+                <p>‘Learn About the Greenhouse Gas Reporting Program (GHGRP).’  The United States Environmental Protection Agency (EPA).  February 2017.  https://www.epa.gov/ghgreporting/learn-about-greenhouse-gas-reporting-program-ghgrp  Accessed 29 April 2017</p>
+                <p>Global Justice Now.  ‘Silent but Deadly - Estimating the real climate impact of agribusiness corporations.’  December 2015.
+                http://www.globaljustice.org.uk/resources/silent-deadly-estimating-real-climate-impact-agribusiness-corporations  Accessed 29 April 2017.</p>
+                <p>Painter, Kristen Leigh.  ‘Cargill is selling two cattle feedlots, exiting that portion of the beef industry.’  Star Tribune.  26 April 2017.
+                <http://www.startribune.com/cargill-sells-last-cattle-feedlots-exiting-that-portion-of-the-beef-industry/420501343/>  Accessed 29 April 2017.</p>
+                <p>‘The Sources and Solution: Agriculture.’   The United States Environmental Protection Agency (EPA).  10 March 2017. <https://www.epa.gov/nutrientpollution/sources-and-solutions-agriculture>  Accessed 29 April 2017.</p>
+                <p>‘Waste Management’.  Grace Projects.  2017. <http://www.sustainabletable.org/906/waste-management>  Accessed 29 April 2017.</p>
+                
+            </div>
+        </div>
+        <div id="sidebar-2" class="sidebar">
+            <div class="sidebar-content">
+                <p><a class="show-map-1">Switch to: Greenhouse Gas Emissions and Proximity to Rivers and Lakes</a></p>
+                <hr/>
+                 <h3>Facility Proximity to Protected Wildlife Areas</h3>
+                <p>Complications from construction, pollution, and land acquisition are all contributing to shrinking natural wildlife habitats.  While many of the protected areas I explored had industrial farming facilities onsite or nearby, protected Fish Spawning (in California) and Wildfowl Production areas were especially inundated.   The map indicates that these areas have a disproportionate amount of processing facilities located within the designated area.  The EPA will need to better mandate safe processing practices, or encourage facilities to move all together, if these natural ecosystems are going to remain.</p>
+                
+                <div id="gas-2" class="gas">
+                <div> Greenhouse Gas Emissions </div>
+                <label><input type="radio" id="all-2" name="gas"/> All Emissions</label>
+                <label><input type="radio" id="vhigh-2" name="gas"/> Very High  </label>
+                <label><input type="radio" id="high-2" name="gas"/> High </label>
+                <label><input type="radio" id="med-2" name="gas"/> Medium  </label>
+                <label><input type="radio" id="low-2" name="gas"/> Low  </label>
+                     </div>
+            </div>
+        </div>
+        
+                <div id="cartodb-legend-1" class="cartodb-legend color">
                         <div class="legend-title"> Legend </div>
                         <ul class="legend-list">
-                            <li><div class="bullet" style="background-color: rgb(102,207,255);"></div> Natural Bodies of Water </li>
+                             <li><div class="bullet" style="background-color: rgb(102,207,255);"></div> Natural Body of Water </li>
                             <li><div class="bullet" style="background-color: #2b6608;"></div> Unreported Emissions </li>
                             <li>
                                 <table id="emissions-low-high">
@@ -113,12 +170,40 @@
                             </li>
                         </ul>
                     </div>
-                     </div>
-                 </td>
-             </tr>      
-         </table>
-      
-        <script type="template/html" id="popup-template">
+        
+        <div id="cartodb-legend-2" class="cartodb-legend color">
+                        <div class="legend-title"> Legend </div>
+                        <ul class="legend-list">
+                            <li><div class="bullet" style="background-color: #30a130;"></div> Protected Waterfowl Area </li>
+                            <li><div class="bullet" style="background-color: #bc3e3e;"></div> Protected Fish Spawning Area </li>
+                            <li><div class="bullet" style="background-color: #2b6608;"></div> Unreported Emissions </li>
+                            <li>
+                                <table id="emissions-low-high">
+                                    <tr>
+                                        <td colspan="7">
+                                            Emmission Levels
+                                        </td>
+                                    </tr>
+                                    <tr id="emissions-gradient">
+                                        <td id="emissions-gradient-1"></td>
+                                        <td id="emissions-gradient-2"></td>
+                                        <td id="emissions-gradient-3"></td>
+                                        <td id="emissions-gradient-4"></td>
+                                        <td id="emissions-gradient-5"></td>
+                                        <td id="emissions-gradient-6"></td>
+                                        <td id="emissions-gradient-7"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Low</td>
+                                        <td colspan="3"></td>
+                                        <td colspan="2">High</td>
+                                    </tr>
+                                </table>
+                            </li>
+                        </ul>
+                    </div>
+        
+        <script type="template/html" id="popup-template-1">
           <div class="cartodb-popup v2">
         <a href="#close" class="cartodb-popup-close-button close">x</a>
          <div class="cartodb-popup-content-wrapper">
@@ -159,25 +244,58 @@
     <div class="cartodb-popup-tip-container"></div>
     </div>
         </script>
-      
+        
+        <script type="template/html" id="popup-template-2">
+          <div class="cartodb-popup v2">
+        <a href="#close" class="cartodb-popup-close-button close">x</a>
+         <div class="cartodb-popup-content-wrapper">
+        <div class="cartodb-popup-content">
+        <div class="CDB-infowindow CDB-infowindow--light js-infowindow">
+        <div class="CDB-infowindow-close js-close"></div>
+        <div class="CDB-infowindow-container">
+        <div class="CDB-infowindow-bg">
+        <div class="CDB-infowindow-inner">
+        <p>{{facility_name}}</p>
+        <h1 style="font-weight: bold; font-size: 14px; color: #000000"> 2015 and 2011 Emissions </h1> <hr/>   
+        <ul class="CDB-infowindow-list js-content" style="margin-top:5px;margin-bottom:10px;">
+        <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000; font-size: 12px;">2015 emissions</h5>
+        <h4 class="CDB-infowindow-title" style="color:#807e7b; font-size: 12px;">{{_2015_emissions}}</h4>
+    </li>
+        <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000; font-size: 12px;">2011 emissions</h5>
+        <h4 class="CDB-infowindow-title" style="color:#807e7b; font-size: 13px;"> {{_2011_emissions}}</h4>
+    </li>
+    </ul>
+        <h1 style="font-weight: bold; font-size: 14px; color: #000000"> Facility Name </h1> <hr/>   
+        <ul class="CDB-infowindow-list js-content" style="margin-top:5px;margin-bottom:5px;">
+          <li class="CDB-infowindow-listItem">
+        <h5 class="CDB-infowindow-subtitle" style="color:#000000;"> </h5>
+        <h4 class="CDB-infowindow-title" style="color:black; font-size: 12px:">{{facility_name}}</h4> 
+    </li>
+    </ul>
+
+    </div>
+    </div>
+    <div class="CDB-hook">
+      <div class="CDB-hook-inner"></div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <div class="cartodb-popup-tip-container"></div>
+    </div>
+        </script>
+        
         <script>
-            var layer;
+            var layer, layer2, layer3;
               
             $(document).ready(function () {
-                $("#facilities input").prop("checked",true);
-                $("#all").prop("checked",true);
-                cartodb.createVis('map', 'https://thenewschool.carto.com/u/marri/api/v2/viz/9b8d9984-290b-11e7-91b1-0ecd1babdde5/viz.json')
-                   
-                    .done(function (vis, layers) {
-                        layer = layers[1].getSubLayer(0);
-                        updatedata(); 
-                        layer.infowindow.set('sanitizeTemplate', false);
-                        layer.infowindow.set('template', $('#popup-template').html());
-   
-                    });
-           
+                var map1created = false;
+                var map2created = false;
             
-                         function updatedata(){
+            function updatedata1(){
                   var sql = "SELECT * FROM marri.ghgrp_data_5_year_review ";
                 
                   sql = sql + "WHERE primary_naics_code IN (";
@@ -192,45 +310,126 @@
                     if($("#f311611").prop("checked")){
                         sql = sql + "'311611',";
                     }
-
                   
                   sql = sql + "'0') ";
-                  
+                  // there has to be a comma after these, and I couldnt have a ,) so I closed it w/ 0
+                        // it'll never match because there is no zero
                     
                     if($("#menu").val() == "c") {
                    sql = sql + "AND facility_name ILIKE '%cargill%' "; 
                     }
-                   if($("#vhigh").prop("checked")){
+                   if($("#vhigh-1").prop("checked")){
                       sql = sql + "AND _2015_emissions >69000.0";
                   }
                   
-                  if($("#high").prop("checked")){
+                  if($("#high-1").prop("checked")){
                       sql = sql + "AND _2015_emissions >55000.0 AND _2015_emissions <=69000.0";
                   }
-                  if($("#med").prop("checked")){
+                  if($("#med-1").prop("checked")){
                       sql = sql + "AND _2015_emissions >35000.0 AND _2015_emissions <=55000.0";
                   }
-                   if($("#low").prop("checked")){
+                   if($("#low-1").prop("checked")){
                       sql = sql + "AND _2015_emissions <=35000.0";
                   }
                   console.log(sql);
                   layer.setSQL(sql);
               }
               
-              
-              
-              
-             $("#menu, #facilities input, #gas input").change(function(){
-                 updatedata();
+             $("#menu, #facilities input, #gas-1 input").change(function(){
+                 updatedata1();
+                 // call function update everytime something changes (.change)
  
              });
+                
+                $("#gas-2 input").change(function(){
+                 updatedata2();
+                 // call function update everytime something changes (.change)
+ 
+             });
+                
+            
+                function updatedata2(){
+                    var sql = "";
+                        if($("#vhigh-2").prop("checked")){
+                              sql = sql + " AND _2015_emissions >69000.0";
+                          }
+
+                          if($("#high-2").prop("checked")){
+                              sql = sql + " AND _2015_emissions >55000.0 AND _2015_emissions <=69000.0";
+                          }
+                          if($("#med-2").prop("checked")){
+                              sql = sql + " AND _2015_emissions >35000.0 AND _2015_emissions <=55000.0";
+                          }
+                           if($("#low-2").prop("checked")){
+                              sql = sql + " AND _2015_emissions <=35000.0";
+                          }
+                    
+                        layer4.setSQL("SELECT * FROM marri.if_waterfowl_production WHERE state != 'AK'" + sql);
+                  
+                        layer5.setSQL("SELECT * FROM marri.if_protected_spawning WHERE state != 'AK'" + sql);
+                    }
+                
+                
+                
+            
+            
+                    
+                
+                $('.show-map-1').click(function() {
+                   $('#map-2, #sidebar-2, #cartodb-legend-2').hide();
+                    $('#map-1, #sidebar-1, #cartodb-legend-1').show();
+                    
+                    $("#menu").val('a');
+                    $("#facilities input").prop("checked",true);
+                    $("#all-1").prop("checked",true);
+                    
+                    if(!map1created) {
+                        map1created = true;
+                        cartodb.createVis('map-1', 'https://thenewschool.carto.com/u/marri/api/v2/viz/9b8d9984-290b-11e7-91b1-0ecd1babdde5/viz.json')
+
+                        .done(function (vis, layers) {
+                            layer = layers[1].getSubLayer(0);
+                            updatedata1(); 
+                            layer.infowindow.set('sanitizeTemplate', false);
+                            layer.infowindow.set('template', $('#popup-template-1').html());
+
+                        });
+                    } else {
+                        updatedata1(); 
+                    }
+                });
+                
+                $('.show-map-2').click(function() {
+                   $('#map-1, #sidebar-1, #cartodb-legend-1').hide();
+                    $('#map-2, #sidebar-2, #cartodb-legend-2').show();
+                    
+                    $("#all-2").prop("checked",true);
+                    
+                    if(!map2created) {
+                        map2created = true;
+                        
+                        cartodb.createVis('map-2', 'https://thenewschool.carto.com/u/marri/api/v2/viz/89823e02-39fa-11e7-a57f-0e3ebc282e83/viz.json', {zoom: 4}) 
+
+                        .done(function (vis, layers) {
+                            layer2 = layers[1].getSubLayer(0);
+                            layer3 = layers[1].getSubLayer(1);
+                            layer4 = layers[1].getSubLayer(2);
+                            layer5 = layers[1].getSubLayer(3);
+
+                            updatedata2(); 
+                        });
+                    } else {
+                        updatedata2(); 
+                    }
+                });
+                
+                $('.show-map-1').click();
+                
              });
             
         </script>
-         
-         <p id="epa"><a target="_blank" href="https://www.epa.gov/ghgreporting/ghg-reporting-program-data-sets">Source: EPA: "2015 Data Summary."</a>
-        <img src="http://assets.inhabitat.com/wp-content/blogs.dir/1/files/2010/04/Epa-Logo.jpg" style="width:50px;"/> 
-        </p>         
+          
+       
     </body>
     
 </html>
